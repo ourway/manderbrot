@@ -8,11 +8,15 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 set shortmess=aoO
 badd +1 src/main.rs
-badd +1 Cargo.toml
+badd +0 term://.//9242:/usr/bin/zsh
 argglobal
 silent! argdel *
 edit src/main.rs
 set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
 set nosplitbelow
 set nosplitright
 wincmd t
@@ -20,6 +24,8 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
+exe 'vert 1resize ' . ((&columns * 95 + 80) / 160)
+exe 'vert 2resize ' . ((&columns * 64 + 80) / 160)
 argglobal
 setlocal fdm=manual
 setlocal fde=0
@@ -36,12 +42,32 @@ exe s:l
 normal! zt
 1
 normal! 0
+wincmd w
+argglobal
+if bufexists('term://.//9242:/usr/bin/zsh') | buffer term://.//9242:/usr/bin/zsh | else | edit term://.//9242:/usr/bin/zsh | endif
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+let s:l = 1 - ((0 * winheight(0) + 17) / 34)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+1
+normal! 036|
+wincmd w
+exe 'vert 1resize ' . ((&columns * 95 + 80) / 160)
+exe 'vert 2resize ' . ((&columns * 64 + 80) / 160)
 tabnext 1
 if exists('s:wipebuf') && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif
 unlet! s:wipebuf
-set winheight=20 winwidth=60 winminheight=1 winminwidth=1 shortmess=aI
+set winheight=25 winwidth=95 winminheight=1 winminwidth=15 shortmess=aI
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if file_readable(s:sx)
   exe "source " . fnameescape(s:sx)
